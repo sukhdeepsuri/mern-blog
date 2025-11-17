@@ -19,21 +19,17 @@ export default function CommentSection({ postId }) {
       return;
     }
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/comment/create`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            content: comment,
-            postId,
-            userId: currentUser._id,
-          }),
-        }
-      );
+      const res = await fetch('/api/comment/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: comment,
+          postId,
+          userId: currentUser._id,
+        }),
+      });
       const data = await res.json();
       if (res.ok) {
         setComment('');
@@ -48,11 +44,7 @@ export default function CommentSection({ postId }) {
   useEffect(() => {
     const getComments = async () => {
       try {
-        const res = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_URL
-          }/api/comment/getPostComments/${postId}`
-        );
+        const res = await fetch(`/api/comment/getPostComments/${postId}`);
         if (res.ok) {
           const data = await res.json();
           setComments(data);
@@ -70,15 +62,9 @@ export default function CommentSection({ postId }) {
         navigate('/sign-in');
         return;
       }
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/api/comment/likeComment/${commentId}`,
-        {
-          method: 'PUT',
-          credentials: 'include',
-        }
-      );
+      const res = await fetch(`/api/comment/likeComment/${commentId}`, {
+        method: 'PUT',
+      });
       if (res.ok) {
         const data = await res.json();
         setComments(
@@ -97,7 +83,6 @@ export default function CommentSection({ postId }) {
       console.log(error.message);
     }
   };
-
   const handleEdit = async (comment, editedContent) => {
     setComments(
       comments.map((c) =>
@@ -113,15 +98,9 @@ export default function CommentSection({ postId }) {
         navigate('/sign-in');
         return;
       }
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/api/comment/deleteComment/${commentId}`,
-        {
-          method: 'DELETE',
-          credentials: 'include',
-        }
-      );
+      const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
+        method: 'DELETE',
+      });
       if (res.ok) {
         const data = await res.json();
         setComments(comments.filter((comment) => comment._id !== commentId));

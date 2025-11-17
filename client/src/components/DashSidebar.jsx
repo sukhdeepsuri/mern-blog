@@ -1,7 +1,6 @@
 import { Sidebar } from 'flowbite-react';
 import {
   HiUser,
-  HiArrowSmRight,
   HiDocumentText,
   HiOutlineUserGroup,
   HiAnnotation,
@@ -9,13 +8,20 @@ import {
 } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { signoutSuccess } from '../redux/user/userSlice';
+import {
+  signoutSuccess,
+
+} from "../redux/user/userSlice";
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+
+
 
 export default function DashSidebar() {
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState('');
   useEffect(() => {
@@ -25,34 +31,35 @@ export default function DashSidebar() {
       setTab(tabFromUrl);
     }
   }, [location.search]);
+  
+
+
   const handleSignout = async () => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/user/signout`,
-        {
-          method: 'POST',
-          credentials: 'include',
-        }
-      );
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
       const data = await res.json();
       if (!res.ok) {
         console.log(data.message);
       } else {
         dispatch(signoutSuccess());
+        navigate('/signin');
       }
     } catch (error) {
       console.log(error.message);
     }
   };
+
   return (
     <Sidebar className='w-full md:w-56'>
       <Sidebar.Items>
         <Sidebar.ItemGroup className='flex flex-col gap-1'>
-          {currentUser && currentUser.isAdmin && (
+        {currentUser && currentUser.isAdmin && (
             <Link to='/dashboard?tab=dash'>
               <Sidebar.Item
                 active={tab === 'dash' || !tab}
-                icon={HiChartPie}
+               icon={HiChartPie}
                 as='div'
               >
                 Dashboard
@@ -81,7 +88,7 @@ export default function DashSidebar() {
               </Sidebar.Item>
             </Link>
           )}
-          {currentUser.isAdmin && (
+              {currentUser.isAdmin && (
             <>
               <Link to='/dashboard?tab=users'>
                 <Sidebar.Item
@@ -103,10 +110,12 @@ export default function DashSidebar() {
               </Link>
             </>
           )}
+         
+         
           <Sidebar.Item
-            icon={HiArrowSmRight}
-            className='cursor-pointer'
             onClick={handleSignout}
+            className='cursor-pointer'
+            
           >
             Sign Out
           </Sidebar.Item>

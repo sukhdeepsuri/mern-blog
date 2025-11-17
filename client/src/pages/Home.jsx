@@ -1,70 +1,51 @@
-import { Link } from "react-router-dom";
-import CallToAction from "../components/CallToAction";
-import { useEffect, useState } from "react";
-import PostCard from "../components/PostCard";
+import { Link } from 'react-router-dom';
+import CallToAction from '../components/CallToAction';
+import { useEffect, useState } from 'react';
+import PostCard from '../components/PostCard';
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/post/getPosts`);
-        const text = await res.text(); // read raw response
-
-        if (!res.ok) {
-          console.error("Failed to fetch posts", res.status, text);
-          setPosts([]); // or show an error state
-          return;
-        }
-
-        if (!text || text.trim() === "") {
-          console.warn("Empty response body for posts");
-          setPosts([]);
-          return;
-        }
-
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          console.error("Invalid JSON from posts endpoint:", text);
-          setPosts([]);
-          return;
-        }
-
-        setPosts(data.posts || []);
-      } catch (err) {
-        console.error("Error fetching posts:", err);
-        setPosts([]);
-      }
+      const res = await fetch('/api/post/getPosts');
+      const data = await res.json();
+      setPosts(data.posts);
     };
     fetchPosts();
   }, []);
-
   return (
     <div>
-      <div className="flex flex-col gap-6 p-10  px-3 max-w-6xl mx-auto ">
-        <h1 className="text-3xl font-bold lg:text-6xl pt-10">Welcome to my Blog</h1>
-        <p className="text-gray-500 text-xs sm:text-sm">
-          Welcome to my blog! Here you'll find a wide range of articles, tutorials, and resources designed to help you grow as a developer. Whether you're interested in web development, software engineering, programming languages, or best practices in the tech industry, there's something here for
-          everyone. Dive in and explore the content to expand your knowledge and skills.
+      <div className='flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto '>
+        <h1 className='text-3xl font-bold lg:text-6xl'>Welcome to my Blog</h1>
+        <p className='text-gray-500 text-xs sm:text-sm'>
+          Here you'll find a variety of articles and tutorials on topics such as
+          web development, software engineering, and programming languages.
         </p>
-        <Link to="/search" className="text-xs sm:text-sm text-teal-500 font-bold hover:underline">
+        <Link
+          to='/search'
+          className='text-xs sm:text-sm text-teal-500 font-bold hover:underline'
+        >
           View all posts
         </Link>
       </div>
+      <div className='p-3 bg-amber-100 dark:bg-slate-700'>
+        <CallToAction />
+      </div>
 
-      <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 py-3">
+      <div className='max-w-6xl mx-auto p-3 flex flex-col gap-8 py-7'>
         {posts && posts.length > 0 && (
-          <div className="flex flex-col gap-6">
-            <h2 className="text-2xl font-semibold text-center">Recent Posts</h2>
-            <div className="flex flex-wrap gap-3">
+          <div className='flex flex-col gap-6'>
+            <h2 className='text-2xl font-semibold text-center'>Recent Posts</h2>
+            <div className='flex flex-wrap gap-4'>
               {posts.map((post) => (
                 <PostCard key={post._id} post={post} />
               ))}
             </div>
-            <Link to={"/search"} className="text-lg text-teal-500 hover:underline text-center">
+            <Link
+              to={'/search'}
+              className='text-lg text-teal-500 hover:underline text-center'
+            >
               View all posts
             </Link>
           </div>
